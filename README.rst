@@ -12,12 +12,8 @@ WIM Watermark Images
         :target: https://pypi.python.org/pypi/wim
 
 
-wim is a command line tool to add watermarks to images'
+wim is a command line tool to add watermarks to images. By default it draws white text on transparent black background on the bottom of the
+image.
 
-* Free software: BSD license
-* Documentation: https://wim.readthedocs.org.
-
-Features
---------
-
-* TODO
+* Free software: MIT license
+* Documentation: https://pythonhosted.org/wim/
