@@ -5,12 +5,12 @@ from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
 
 @click.command()
+@click.option('--fontsize', default=12)
+@click.option('--text', '-t')
 @click.argument('filename')
-@click.argument('text')
-def main(filename, text):
+def main(fontsize, text, filename):
     ttf = 'arial.ttf'
     opacity = 0.50
-    size = 40
 
     im = Image.open(filename)
     outfile = filename + '.jpg'
@@ -20,7 +20,7 @@ def main(filename, text):
 
     watermark = Image.new('RGBA', im.size, (0, 0, 0, 0))
 
-    font = ImageFont.truetype(ttf, size)
+    font = ImageFont.truetype(ttf, fontsize)
     text_width, text_height = font.getsize(text)
 
     draw = ImageDraw.Draw(watermark, 'RGBA')
