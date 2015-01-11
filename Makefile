@@ -10,6 +10,7 @@ help:
 	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
+	@echo "docs-release - generate and upload docs to PyPI"
 	@echo "release - package and upload a release"
 	@echo "dist - package"
 
@@ -44,7 +45,7 @@ coverage:
 	coverage run --source wim setup.py test
 	coverage report -m
 	coverage html
-	open htmlcov/index.html
+	firefox htmlcov/index.html
 
 docs:
 	rm -f docs/wim.rst
@@ -52,7 +53,10 @@ docs:
 	sphinx-apidoc -o docs/ wim
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	open docs/_build/html/index.html
+	firefox docs/_build/html/index.html
+
+docs-release: docs
+	python setup.py upload_docs
 
 release: clean
 	python setup.py sdist upload

@@ -22,7 +22,7 @@ test_requirements = [
 setup(
     name='wim',
     version='0.1.0',
-    description='wim is a command line tool to add watermarks to images'',
+    description='wim is a command line tool to add watermarks to images',
     long_description=readme + '\n\n' + history,
     author='Ramiro Gómez',
     author_email='code@ramiro.org',
