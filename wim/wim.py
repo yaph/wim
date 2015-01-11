@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 @click.command()
 @click.argument('filename')
 @click.argument('text')
-def wim(filename, text):
+def main(filename, text):
     ttf = 'arial.ttf'
     opacity = 0.50
     size = 40
@@ -39,4 +39,4 @@ def wim(filename, text):
 
 
 if __name__ == '__main__':
-    wim()
+    main()
