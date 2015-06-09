@@ -17,6 +17,8 @@ wim is a command line tool to create images for the Web.
 Usage
 -----
 
+.. code:: Bash
+
     wim input.png -t 'add this text at the bottom'
 
 Features
