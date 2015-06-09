@@ -1,37 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-
+import io
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
+with io.open('README.rst') as f:
+    readme = f.read()
 
-readme = open('README.rst').read()
-history = open('HISTORY.rst').read().replace('.. :changelog:', '')
+with io.open('HISTORY.rst') as f:
+    history = f.read().replace('.. :changelog:', '')
 
-requirements = [
-    # TODO: put package requirements here
-]
-
-test_requirements = [
-    # TODO: put package test requirements here
-]
+with io.open('requirements.txt', encoding='utf-8') as f:
+    requirements = f.read().splitlines()
 
 setup(
     name='wim',
-    version='0.1.0',
-    description='wim is a command line tool to add watermarks to images',
+    version='0.1.1',
+    description='wim is a command line tool to create Web images.',
     long_description=readme + '\n\n' + history,
     author='Ramiro Gómez',
     author_email='code@ramiro.org',
     url='https://github.com/yaph/wim',
-    packages=[
-        'wim',
-    ],
-    package_dir={'wim':
-                 'wim'},
+    packages=['wim',],
+    package_dir={'wim': 'wim'},
     include_package_data=True,
     install_requires=requirements,
     license="BSD",
@@ -50,7 +43,6 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     test_suite='tests',
-    tests_require=test_requirements,
     entry_points={
         'console_scripts': [
             'wim = wim.wim:main'
