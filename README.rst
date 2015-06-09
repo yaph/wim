@@ -1,6 +1,6 @@
-===============================
-WIM Watermark Images
-===============================
+=====================
+WIM Create Web Images
+=====================
 
 .. image:: https://badge.fury.io/py/wim.png
     :target: http://badge.fury.io/py/wim
@@ -12,8 +12,20 @@ WIM Watermark Images
         :target: https://pypi.python.org/pypi/wim
 
 
-wim is a command line tool to add watermarks to images. By default it draws white text on transparent black background on the bottom of the
-image.
+wim is a command line tool to create images for the Web.
+
+Usage
+-----
+
+    wim input.png -t 'add this text at the bottom'
+
+Features
+--------
+
+* Add text at the bottom of the image.
+
+Meta
+----
 
 * Free software: MIT license
 * Documentation: https://pythonhosted.org/wim/

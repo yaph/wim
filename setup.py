@@ -27,7 +27,7 @@ setup(
     package_dir={'wim': 'wim'},
     include_package_data=True,
     install_requires=requirements,
-    license="BSD",
+    license='MIT',
     zip_safe=False,
     keywords='wim',
     classifiers=[
@@ -35,7 +35,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
