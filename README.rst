@@ -23,6 +23,8 @@ Features
 --------
 
 * Add text at the bottom of the image.
+* Scale image to a maximum dimension.
+* Reduce image file size.
 
 Meta
 ----

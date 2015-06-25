@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to WIM Watermark Images's documentation!
+Welcome to WIM Web Images's documentation!
 ======================================
 
 Contents:

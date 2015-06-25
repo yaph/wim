@@ -2,6 +2,6 @@
 Usage
 ========
 
-To use WIM Watermark Images in a project::
+To use WIM Web Images in a project::
 
     import wim

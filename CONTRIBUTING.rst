@@ -36,8 +36,8 @@ is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-WIM Watermark Images could always use more documentation, whether as part of the
-official WIM Watermark Images docs, in docstrings, or even on the web in blog posts,
+WIM Web Images could always use more documentation, whether as part of the
+official WIM Web Images docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
