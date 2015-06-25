@@ -6,7 +6,7 @@ History
 0.2.0 (2015-06-25)
 ------------------
 
-* Added `scale` and `quantize` options to determine image size and quality.
+* Added ``scale`` and ``quantize`` options to determine image size and quality.
 * Added help texts for arguments.
 
 0.1.1 (2015-06-09)
