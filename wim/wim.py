@@ -31,14 +31,18 @@ def add_text(img, font, fontsize, text):
 
 
 @click.command()
-@click.option('--inplace', '-i', default=False, is_flag=True)
-@click.option('--font', default='arial.ttf')
-@click.option('--fontsize', default=16)
+@click.option('--inplace', '-i', default=False, is_flag=True,
+    help='Edit the image inplace, default is False.')
+@click.option('--font', default='arial.ttf',
+    help='Set the font family, default is arial.ttf.')
+@click.option('--fontsize', default=16,
+    help='Set the font size, default is 16.')
 @click.option('--quantize', '-q', default=False, is_flag=True,
     help='Quantize the image to reduce its filesize.')
 @click.option('--scale', '-s', type=int,
     help='Set the maximum dimension as an integer value.')
-@click.option('--text', '-t')
+@click.option('--text', '-t',
+    help='Set the text to append at the bottom of the image.'))
 @click.argument('filename')
 def main(inplace, font, fontsize, quantize, scale, text, filename):
     img = Image.open(filename)
