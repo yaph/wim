@@ -34,9 +34,13 @@ def add_text(img, font, fontsize, text):
 @click.option('--inplace', '-i', default=False, is_flag=True)
 @click.option('--font', default='arial.ttf')
 @click.option('--fontsize', default=16)
+@click.option('--quantize', '-q', default=False, is_flag=True,
+    help='Quantize the image to reduce its filesize.')
+@click.option('--scale', '-s', type=int,
+    help='Set the maximum dimension as an integer value.')
 @click.option('--text', '-t')
 @click.argument('filename')
-def main(inplace, font, fontsize, text, filename):
+def main(inplace, font, fontsize, quantize, scale, text, filename):
     img = Image.open(filename)
 
     if inplace:
@@ -48,6 +52,12 @@ def main(inplace, font, fontsize, text, filename):
 
     if img.mode != MODE:
         img = img.convert(MODE)
+
+    if quantize:
+        img = img.quantize()
+
+    if scale:
+        img.thumbnail((scale, scale))
 
     if text:
         img = add_text(img, font, fontsize, text)

@@ -17,7 +17,7 @@ with io.open('requirements.txt', encoding='utf-8') as f:
 
 setup(
     name='wim',
-    version='0.1.1',
+    version='0.2.0',
     description='wim is a command line tool to create Web images.',
     long_description=readme + '\n\n' + history,
     author='Ramiro Gómez',
