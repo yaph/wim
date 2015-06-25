@@ -55,7 +55,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'WIM Watermark Images'
+project = u'WIM Web Images'
 copyright = u'2015, Ramiro Gómez'
 
 # The version info for the project you're documenting, acts as replacement
@@ -209,7 +209,7 @@ latex_elements = {
 # [howto/manual]).
 latex_documents = [
     ('index', 'wim.tex',
-     u'WIM Watermark Images Documentation',
+     u'WIM Web Images Documentation',
      u'Ramiro Gómez', 'manual'),
 ]
 
@@ -240,7 +240,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'wim',
-     u'WIM Watermark Images Documentation',
+     u'WIM Web Images Documentation',
      [u'Ramiro Gómez'], 1)
 ]
 
@@ -255,7 +255,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'wim',
-     u'WIM Watermark Images Documentation',
+     u'WIM Web Images Documentation',
      u'Ramiro Gómez',
      'wim',
      'One line description of project.',
