@@ -17,7 +17,7 @@ Usage
 
     wim input.png -t 'add this text at the bottom'
 
-Type wim --help for info on all command line options.
+Type ``wim --help`` for info on all command line options.
 
 Features
 --------
