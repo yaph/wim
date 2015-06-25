@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import io
+from wim import __version__
+
 try:
     from setuptools import setup
 except ImportError:
@@ -17,7 +19,7 @@ with io.open('requirements.txt', encoding='utf-8') as f:
 
 setup(
     name='wim',
-    version='0.2.0',
+    version=__version__,
     description='wim is a command line tool to create Web images.',
     long_description=readme + '\n\n' + history,
     author='Ramiro Gómez',
