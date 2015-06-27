@@ -6,7 +6,7 @@ WIM Create Web Images
     :target: http://badge.fury.io/py/wim
 
 .. image:: https://travis-ci.org/yaph/wim.png?branch=master
-        :target: https://travis-ci.org/yaph/wim
+    :target: https://travis-ci.org/yaph/wim
 
 wim is a command line tool to create images for the Web.
 
