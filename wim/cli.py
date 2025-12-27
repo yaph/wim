@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+import argparse
+import os
+from pathlib import Path
+
+from PIL import Image
+
+from wim.image import add_image, add_text, set_background
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Add text and manipulate images.')
+
+    parser.add_argument('filename', help='Input image filename')
+    parser.add_argument('-i', '--inplace', action='store_true', help='Edit the image inplace, default is False.')
+    parser.add_argument('--font', default='arial.ttf', help='Set the font family, default is arial.ttf.')
+    parser.add_argument('--font-size', type=int, default=16, help='Set the font size, default is 16.')
+    parser.add_argument(
+        '--format',
+        default='webp',
+        choices=['webp', 'jpg', 'jpeg', 'png', 'bmp'],
+        help='Output format (overrides input format)',
+    )
+    parser.add_argument(
+        '-q', '--quantize', action='store_true', help='Quantize the image to reduce its filesize, default is False.'
+    )
+    parser.add_argument(
+        '-s',
+        '--scale',
+        type=int,
+        nargs=2,
+        metavar=('WIDTH', 'HEIGHT'),
+        help='Set the maximum width and height as integer values.',
+    )
+    parser.add_argument('-t', '--text', help='Set the text to append at the bottom of the image.')
+    parser.add_argument('-w', '--watermark', help='Path to watermark/overlay image to add to the image.')
+    parser.add_argument(
+        '--watermark-position',
+        default='bottom-right',
+        choices=['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'],
+        help='Position of watermark (default: bottom-right).',
+    )
+    parser.add_argument('--watermark-opacity', type=int, default=255, help='Opacity of watermark 0-255 (default: 255).')
+    parser.add_argument(
+        '--watermark-scale',
+        type=int,
+        nargs=2,
+        metavar=('WIDTH', 'HEIGHT'),
+        help='Scale watermark to WIDTH HEIGHT in pixels.',
+    )
+
+    argv = parser.parse_args()
+    img = Image.open(argv.filename)
+
+    p_src = Path(argv.filename)
+
+    # Set destination path
+    p_dst = p_src if argv.inplace else p_src.parent / f'{p_src.stem}-wim.{argv.format}'
+
+    if argv.quantize:
+        img = img.quantize()
+
+    if argv.scale:
+        img.thumbnail(argv.scale)
+
+    if argv.text:
+        img = add_text(img, argv.font, argv.font_size, argv.text)
+
+    if argv.watermark:
+        img = add_image(img, argv.watermark, position=argv.watermark_position, scale=argv.watermark_scale, opacity=argv.watermark_opacity)
+
+    # Convert RGBA to RGB for JPEG files
+    if p_dst.suffix.lower() in ['.jpg', '.jpeg'] and img.mode == 'RGBA':
+        img = set_background(img)
+
+    img.save(p_dst)
+    stat = p_src.stat()
+    os.utime(p_dst, (stat.st_atime, stat.st_mtime))
+
+
+if __name__ == '__main__':
+    main()

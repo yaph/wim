@@ -1,0 +1,105 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wim"
+dynamic = ["version"]
+description = 'wim is a command line tool to create images for the web.'
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+keywords = [
+  'cli',
+  'command-line-tool',
+  'image-optimization',
+  'image-processing',
+  'image',
+  'python-package'
+]
+authors = [
+  { name = "Ramiro Gómez", email = "code@ramiro.org" },
+]
+dependencies = [
+  "pillow"
+]
+
+[project.scripts]
+wim = "wim.cli:main"
+
+[project.urls]
+Documentation = "https://github.com/yaph/wim#readme"
+Issues = "https://github.com/yaph/wim/issues"
+Source = "https://github.com/yaph/wim"
+
+[tool.hatch.version]
+path = "wim/__about__.py"
+
+[tool.hatch.envs.wim-dev]
+builder = true
+extra-dependencies = ["flake8", "ipdb", "mypy>=1.0.0", "pytest"]
+
+[tool.hatch.envs.wim-dev.env-vars]
+PYTHONBREAKPOINT = "ipdb.set_trace"
+
+[tool.hatch.envs.wim-dev.scripts]
+type_check = "mypy --install-types --non-interactive {args:wim tests}"
+clean = [
+  "rm -rf build",
+  "rm -rf dist",
+  "rm -rf wim.egg-info",
+  "find . -type d -name '__pycache__' -prune",
+  "find . -name '*.pyc' -delete",
+  "find . -name '*.pyo' -delete",
+  "find . -name '*~' -delete",
+]
+qa = [
+  "hatch run type_check",
+  "hatch test",
+  "hatch fmt"
+]
+release = [
+  "hatch run clean",
+  "bin/add_help_to_readme.py",
+  "git diff",
+  "hatch run qa",
+  "hatch build --clean",
+  "hatch publish",
+  "git tag -a $(hatch version) -m \"Create version $(hatch version)\"",
+  "git push --tags",
+  "git-changelog -o CHANGELOG.md",
+  "git commit -m 'Update CHANGELOG' CHANGELOG.md",
+  "git push"
+]
+test_release = [
+  "hatch run qa",
+  "hatch build --clean"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["wim"]
+
+[tool.coverage.run]
+source_pkgs = ["wim", "tests"]
+branch = true
+parallel = true
+omit = [
+  "wim/__about__.py",
+]
+
+[tool.coverage.paths]
+wim = ["wim", "*/wim/wim"]
+tests = ["tests", "*/wim/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.ruff.lint]
+ignore = ["T201", "DTZ005", "FA100"]
+
+[tool.ruff.format]
+quote-style = "preserve"
