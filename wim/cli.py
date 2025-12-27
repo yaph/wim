@@ -8,7 +8,7 @@ from PIL import Image
 from wim.image import add_image, add_text, set_background
 
 
-def main():
+def main(args=None) -> None:
     parser = argparse.ArgumentParser(description='Add text and manipulate images.')
 
     parser.add_argument('filename', help='Input image filename')
@@ -49,7 +49,7 @@ def main():
         help='Scale watermark to WIDTH HEIGHT in pixels.',
     )
 
-    argv = parser.parse_args()
+    argv = parser.parse_args(args)
     img = Image.open(argv.filename)
 
     p_src = Path(argv.filename)
