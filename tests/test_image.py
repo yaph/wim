@@ -1,24 +1,22 @@
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
-import wim.image as image
+from wim import image
 
 
 class _FakeFont:
     """Wrap a PIL ImageFont and provide getbbox/getsize/getmask expected by wim.image.add_text."""
+
     def __init__(self, base_font):
         self.base = base_font
 
     def getbbox(self, text):
         # Prefer the font's own getbbox if available
         if hasattr(self.base, "getbbox"):
-            bbox = self.base.getbbox(text)
-            # Normalize to (left, top, right, bottom)
-            return bbox
+            return self.base.getbbox(text)
         # Fallback to drawing on a tiny canvas and using textbbox
         im = Image.new("RGBA", (1, 1))
         draw = ImageDraw.Draw(im)
-        bbox = draw.textbbox((0, 0), text, font=self.base)
-        return bbox
+        return draw.textbbox((0, 0), text, font=self.base)
 
     def getsize(self, text):
         # Compute width/height using getbbox
@@ -50,7 +48,9 @@ def test_calculate_position():
     # center
     assert image.calculate_position((101, 51), (21, 11), 'center', 0) == ((101 - 21) // 2, (51 - 11) // 2)
     # unknown position falls back to bottom-right
-    assert image.calculate_position(base, overlay, 'not-a-position', 2) == image.calculate_position(base, overlay, 'bottom-right', 2)
+    assert image.calculate_position(base, overlay, 'not-a-position', 2) == image.calculate_position(
+        base, overlay, 'bottom-right', 2
+    )
 
 
 def test_ensure_rgba_converts_and_keeps_rgba():
@@ -71,7 +71,7 @@ def test_add_text_changes_image(monkeypatch):
     stored_default_font = ImageFont.load_default()
 
     # Fake truetype that accepts extra kwargs (Pillow may pass layout_engine, etc.)
-    def fake_truetype(path, size, *args, **kwargs):
+    def fake_truetype(path, size, *args, **kwargs):  # noqa: ARG001
         # Always return a wrapper around the stored default font.
         return _FakeFont(stored_default_font)
 
@@ -80,7 +80,9 @@ def test_add_text_changes_image(monkeypatch):
     monkeypatch.setattr(image.ImageFont, 'truetype', fake_truetype, raising=False)
 
     # Add text and assert resulting image differs from original bytes
-    result = image.add_text(base, font='dummy.ttf', font_size=12, text='hello', bg_alpha=64, position='bottom-right', padding=2)
+    result = image.add_text(
+        base, font='dummy.ttf', font_size=12, text='hello', bg_alpha=64, position='bottom-right', padding=2
+    )
     assert isinstance(result, Image.Image)
     assert result.size == base.size
     assert result.mode == 'RGBA'

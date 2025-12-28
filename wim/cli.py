@@ -58,7 +58,7 @@ def main(args=None) -> None:
     p_dst = p_src if argv.inplace else p_src.parent / f'{p_src.stem}-wim.{argv.format}'
 
     if argv.quantize:
-        img = img.quantize()
+        img = img.quantize()  # type: ignore
 
     if argv.scale:
         img.thumbnail(argv.scale)
@@ -67,7 +67,13 @@ def main(args=None) -> None:
         img = add_text(img, argv.font, argv.font_size, argv.text)
 
     if argv.watermark:
-        img = add_image(img, argv.watermark, position=argv.watermark_position, scale=argv.watermark_scale, opacity=argv.watermark_opacity)
+        img = add_image(
+            img,
+            argv.watermark,
+            position=argv.watermark_position,
+            scale=argv.watermark_scale,
+            opacity=argv.watermark_opacity,
+        )
 
     # Convert RGBA to RGB for JPEG files
     if p_dst.suffix.lower() in ['.jpg', '.jpeg'] and img.mode == 'RGBA':
