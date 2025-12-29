@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.1.0](https://github.com/yaph/wim/releases/tag/1.1.0) - 2025-12-29
+
+<small>[Compare with 1.0.0](https://github.com/yaph/wim/compare/1.0.0...1.1.0)</small>
+
+### Added
+
+- Add outdir argument and prevent clashes between mutually exclusive arguments. ([a9660d1](https://github.com/yaph/wim/commit/a9660d194b7ed63fdd0971ae99138cfd28e38f0f) by Ramiro Gómez).
+- Add support for processing multiple input images. Use thumbnail function for all scaling operations. Bumb version. ([33db127](https://github.com/yaph/wim/commit/33db1274d8fbbaa8a9d494c416853eca8a4c6f57) by Ramiro Gómez).
+
 ## [1.0.0](https://github.com/yaph/wim/releases/tag/1.0.0) - 2025-12-28
 
 <small>[Compare with 0.2.1](https://github.com/yaph/wim/compare/0.2.1...1.0.0)</small>
