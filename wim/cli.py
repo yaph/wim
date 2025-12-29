@@ -14,7 +14,7 @@ def main(args=None) -> None:
     parser.add_argument(
         'filename', type=str, nargs='+', help='Input image filename. Use wildcard to process multiple files.'
     )
-    parser.add_argument('--font', default='arial.ttf', help='Set the font family, default is arial.ttf.')
+    parser.add_argument('--font', help='Path to TrueType font file. If not specified, uses default font.')
     parser.add_argument('--font-size', type=int, default=16, help='Set the font size, default is 16.')
     parser.add_argument(
         '--format',

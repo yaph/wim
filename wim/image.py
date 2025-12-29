@@ -7,96 +7,6 @@ WHITE = (255, 255, 255, 255)
 FULL_OPACITY = 255
 
 
-def auto_orient(img):
-    return ImageOps.exif_transpose(img)
-
-
-def calculate_position(base_size, overlay_size, position, padding):
-    """
-    Calculate the position for placing an overlay on a base image.
-
-    Args:
-        base_size: Tuple of (width, height) for the base image
-        overlay_size: Tuple of (width, height) for the overlay
-        position: One of 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'
-        padding: Padding in pixels from the edges
-
-    Returns:
-        Tuple of (x, y) coordinates for the overlay position
-    """
-    base_width, base_height = base_size
-    overlay_width, overlay_height = overlay_size
-
-    positions = {
-        'top-left': (padding, padding),
-        'top-right': (base_width - overlay_width - padding, padding),
-        'bottom-left': (padding, base_height - overlay_height - padding),
-        'bottom-right': (base_width - overlay_width - padding, base_height - overlay_height - padding),
-        'center': ((base_width - overlay_width) // 2, (base_height - overlay_height) // 2),
-    }
-
-    return positions.get(position, positions['bottom-right'])
-
-
-def ensure_rgba(img):
-    """Convert to RGBA if needed."""
-
-    return img if img.mode == MODE else img.convert(MODE)
-
-
-def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', padding=0):
-    """
-    Add text with a semi-transparent background to an image.
-
-    Args:
-        img: PIL Image object
-        font: Path to font file
-        font_size: Size of the font
-        text: Text to add
-        bg_alpha: Alpha value for background (0-255, default 32)
-        position: Position of text ('top-left', 'top-right', 'bottom-left', 'bottom-right', 'center')
-        padding: Padding from edges in pixels
-
-    Returns:
-        PIL Image object with text added
-    """
-
-    font = ImageFont.truetype(font, font_size)
-    bbox = font.getbbox(text)
-    text_width = bbox[2] - bbox[0]
-    text_height = bbox[3] - bbox[1]
-    text_img_height = int(text_height * 1.5)
-    text_img_width = int(text_width * 1.1)
-
-    # Create a transparent overlay the same size as the base image
-    base_overlay = Image.new(MODE, img.size, (0, 0, 0, 0))
-    draw = ImageDraw.Draw(base_overlay, MODE)
-
-    # Calculate position
-    x_pos, y_pos = calculate_position(img.size, (text_img_width, text_img_height), position, padding)
-
-    # Draw semi-transparent background rectangle
-    bg_color = (0, 0, 0, bg_alpha)
-    draw.rectangle([(x_pos, y_pos), (x_pos + text_img_width, y_pos + text_img_height)], fill=bg_color)
-
-    # Composite the semi-transparent background first
-    base_layer = Image.alpha_composite(ensure_rgba(img), base_overlay)
-
-    # Now draw the fully opaque text on a new overlay
-    text_overlay = Image.new(MODE, img.size, (0, 0, 0, 0))
-    text_draw = ImageDraw.Draw(text_overlay, MODE)
-
-    # Calculate centered text position
-    text_x = x_pos + (text_img_width - text_width) / 2
-    text_y = y_pos + (text_img_height - text_height) / 2
-
-    # Draw text with full opacity (alpha = 255)
-    text_draw.text((text_x, text_y), text, WHITE, font=font)
-
-    # Composite the text overlay
-    return Image.alpha_composite(base_layer, text_overlay)
-
-
 def add_image(img, overlay_path, position='bottom-right', padding=0, scale=None, opacity=FULL_OPACITY):
     """
     Blend an image over the base image.
@@ -140,6 +50,116 @@ def add_image(img, overlay_path, position='bottom-right', padding=0, scale=None,
 
     # Composite with base image
     return Image.alpha_composite(ensure_rgba(img), canvas)
+
+
+def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', padding=0):
+    """
+    Add text with a semi-transparent background to an image.
+
+    Args:
+        img: PIL Image object
+        font: Path to font file
+        font_size: Size of the font
+        text: Text to add
+        bg_alpha: Alpha value for background (0-255, default 32)
+        position: Position of text ('top-left', 'top-right', 'bottom-left', 'bottom-right', 'center')
+        padding: Padding from edges in pixels
+
+    Returns:
+        PIL Image object with text added
+    """
+
+    font = load_font(font, font_size)
+    bbox = font.getbbox(text)
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+    text_img_height = int(text_height * 1.5)
+    text_img_width = int(text_width * 1.1)
+
+    # Create a transparent overlay the same size as the base image
+    base_overlay = Image.new(MODE, img.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(base_overlay, MODE)
+
+    # Calculate position
+    x_pos, y_pos = calculate_position(img.size, (text_img_width, text_img_height), position, padding)
+
+    # Draw semi-transparent background rectangle
+    bg_color = (0, 0, 0, bg_alpha)
+    draw.rectangle([(x_pos, y_pos), (x_pos + text_img_width, y_pos + text_img_height)], fill=bg_color)
+
+    # Composite the semi-transparent background first
+    base_layer = Image.alpha_composite(ensure_rgba(img), base_overlay)
+
+    # Now draw the fully opaque text on a new overlay
+    text_overlay = Image.new(MODE, img.size, (0, 0, 0, 0))
+    text_draw = ImageDraw.Draw(text_overlay, MODE)
+
+    # Calculate centered text position
+    text_x = x_pos + (text_img_width - text_width) / 2
+    text_y = y_pos + (text_img_height - text_height) / 2
+
+    # Draw text with full opacity (alpha = 255)
+    text_draw.text((text_x, text_y), text, WHITE, font=font)
+
+    # Composite the text overlay
+    return Image.alpha_composite(base_layer, text_overlay)
+
+
+def calculate_position(base_size, overlay_size, position, padding):
+    """
+    Calculate the position for placing an overlay on a base image.
+
+    Args:
+        base_size: Tuple of (width, height) for the base image
+        overlay_size: Tuple of (width, height) for the overlay
+        position: One of 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'
+        padding: Padding in pixels from the edges
+
+    Returns:
+        Tuple of (x, y) coordinates for the overlay position
+    """
+    base_width, base_height = base_size
+    overlay_width, overlay_height = overlay_size
+
+    positions = {
+        'top-left': (padding, padding),
+        'top-right': (base_width - overlay_width - padding, padding),
+        'bottom-left': (padding, base_height - overlay_height - padding),
+        'bottom-right': (base_width - overlay_width - padding, base_height - overlay_height - padding),
+        'center': ((base_width - overlay_width) // 2, (base_height - overlay_height) // 2),
+    }
+
+    return positions.get(position, positions['bottom-right'])
+
+
+def ensure_rgba(img):
+    """Convert to RGBA if needed."""
+
+    return img if img.mode == MODE else img.convert(MODE)
+
+
+def load_font(font_path, font_size):
+    """
+    Load a TrueType font with fallback to default font.
+
+    Args:
+        font_path: Path to TrueType font file or None
+        font_size: Size of the font (ignored for default font)
+
+    Returns:
+        ImageFont object
+    """
+    # If no font path provided, use default immediately
+    if font_path is None:
+        print('Using default font (TrueType fonts not available)')
+        return ImageFont.load_default()
+
+    try:
+        return ImageFont.truetype(font_path, font_size)
+    except (OSError, IOError, PermissionError) as e:
+        print(f"Warning: Could not load font '{font_path}': {e}")
+        print('Falling back to default font')
+        return ImageFont.load_default()
 
 
 def set_background(img):
