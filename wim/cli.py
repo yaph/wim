@@ -14,7 +14,6 @@ def main(args=None) -> None:
     parser.add_argument(
         'filename', type=str, nargs='+', help='Input image filename. Use wildcard to process multiple files.'
     )
-    parser.add_argument('-i', '--inplace', action='store_true', help='Edit the image inplace, default is False.')
     parser.add_argument('--font', default='arial.ttf', help='Set the font family, default is arial.ttf.')
     parser.add_argument('--font-size', type=int, default=16, help='Set the font size, default is 16.')
     parser.add_argument(
@@ -51,14 +50,25 @@ def main(args=None) -> None:
         help='Scale watermark to WIDTH HEIGHT in pixels.',
     )
 
+    output_group = parser.add_mutually_exclusive_group()
+    output_group.add_argument(
+        '-i', '--inplace', action='store_true', help='Edit the image in place (overwrites original).'
+    )
+    output_group.add_argument('-o', '--outdir', help='Output directory for processed images.')
+
     argv = parser.parse_args(args)
+
+    if argv.inplace and argv.format:
+        parser.error('--format cannot be used with --inplace (inplace preserves original format)')
 
     for name in argv.filename:
         img = Image.open(name)
         p_src = Path(name)
 
         # Set destination path
-        p_dst = p_src if argv.inplace else p_src.parent / f'{p_src.stem}-wim.{argv.format}'
+        parent = Path(argv.outdir) if argv.outdir else p_src.parent
+        parent.mkdir(exist_ok=True)
+        p_dst = p_src if argv.inplace else parent / f'{p_src.stem}-wim.{argv.format}'
 
         if argv.quantize:
             img = img.quantize()  # type: ignore
