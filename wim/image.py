@@ -1,10 +1,14 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 IMAGE_FORMATS = ['bmp', 'jpeg', 'jpg', 'png', 'webp']
 MODE = 'RGBA'
 BLACK = (0, 0, 0, 255)
 WHITE = (255, 255, 255, 255)
 FULL_OPACITY = 255
+
+
+def auto_orient(img):
+    return ImageOps.exif_transpose(img)
 
 
 def calculate_position(base_size, overlay_size, position, padding):

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from wim.image import IMAGE_FORMATS, add_image, add_text, set_background
+from wim.image import IMAGE_FORMATS, add_image, add_text, auto_orient, set_background
 
 
 def main(args=None) -> None:
@@ -75,6 +75,11 @@ def main(args=None) -> None:
 
         if argv.scale:
             img.thumbnail(argv.scale)
+
+        # Make sure the image orientation is correct when adding text or images.
+        # This must happen after scaling the image.
+        if argv.text or argv.watermark:
+            img = auto_orient(img)
 
         if argv.text:
             img = add_text(img, argv.font, argv.font_size, argv.text)
