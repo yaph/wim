@@ -90,24 +90,23 @@ wim --help
 
 <!-- START: DO NOT EDIT -->
 ```text
-usage: wim [-h] [-i] [--font FONT] [--font-size FONT_SIZE] [--format {webp,jpg,jpeg,png,bmp}] [-q]
+usage: wim [-h] [--font FONT] [--font-size FONT_SIZE] [--format {bmp,jpeg,jpg,png,webp}] [-q]
                              [-s WIDTH HEIGHT] [-t TEXT] [-w WATERMARK]
                              [--watermark-position {top-left,top-right,bottom-left,bottom-right,center}]
-                             [--watermark-opacity WATERMARK_OPACITY] [--watermark-scale WIDTH HEIGHT]
-                             filename
+                             [--watermark-opacity WATERMARK_OPACITY] [--watermark-scale WIDTH HEIGHT] [-i | -o OUTDIR]
+                             filename [filename ...]
 
 Add text and manipulate images.
 
 positional arguments:
-  filename              Input image filename
+  filename              Input image filename. Use wildcard to process multiple files.
 
 options:
   -h, --help            show this help message and exit
-  -i, --inplace         Edit the image inplace, default is False.
   --font FONT           Set the font family, default is arial.ttf.
   --font-size FONT_SIZE
                         Set the font size, default is 16.
-  --format {webp,jpg,jpeg,png,bmp}
+  --format {bmp,jpeg,jpg,png,webp}
                         Output format (overrides input format)
   -q, --quantize        Quantize the image to reduce its filesize, default is False.
   -s WIDTH HEIGHT, --scale WIDTH HEIGHT
@@ -121,6 +120,9 @@ options:
                         Opacity of watermark 0-255 (default: 255).
   --watermark-scale WIDTH HEIGHT
                         Scale watermark to WIDTH HEIGHT in pixels.
+  -i, --inplace         Edit the image in place (overwrites original).
+  -o OUTDIR, --outdir OUTDIR
+                        Output directory for processed images.
 
 ```
 <!-- END: DO NOT EDIT -->
