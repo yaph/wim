@@ -3,9 +3,9 @@ import argparse
 import os
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageOps
 
-from wim.image import IMAGE_FORMATS, add_image, add_text, auto_orient, set_background
+from wim.image import IMAGE_FORMATS, add_image, add_text, set_background
 
 
 def main(args=None) -> None:
@@ -18,7 +18,6 @@ def main(args=None) -> None:
     parser.add_argument('--font-size', type=int, default=16, help='Set the font size, default is 16.')
     parser.add_argument(
         '--format',
-        default='webp',
         choices=IMAGE_FORMATS,
         help='Output format (overrides input format)',
     )
@@ -68,7 +67,8 @@ def main(args=None) -> None:
         # Set destination path
         parent = Path(argv.outdir) if argv.outdir else p_src.parent
         parent.mkdir(exist_ok=True)
-        p_dst = p_src if argv.inplace else parent / f'{p_src.stem}-wim.{argv.format}'
+        format = argv.format if argv.format else p_src.suffix.lstrip('.')
+        p_dst = p_src if argv.inplace else parent / f'{p_src.stem}-wim.{format}'
 
         if argv.quantize:
             img = img.quantize()  # type: ignore
@@ -76,10 +76,9 @@ def main(args=None) -> None:
         if argv.scale:
             img.thumbnail(argv.scale)
 
-        # Make sure the image orientation is correct when adding text or images.
-        # This must happen after scaling the image.
-        if argv.text or argv.watermark:
-            img = auto_orient(img)
+        # Make sure the image orientation is correct.
+        # This must happen after scaling the image and before adding text or images.
+        img = ImageOps.exif_transpose(img)
 
         if argv.text:
             img = add_text(img, argv.font, argv.font_size, argv.text)
