@@ -67,8 +67,8 @@ def main(args=None) -> None:
         # Set destination path
         parent = Path(argv.outdir) if argv.outdir else p_src.parent
         parent.mkdir(exist_ok=True)
-        format = argv.format if argv.format else p_src.suffix.lstrip('.')
-        p_dst = p_src if argv.inplace else parent / f'{p_src.stem}-wim.{format}'
+        suffix = argv.format if argv.format else p_src.suffix.lstrip('.')
+        p_dst = p_src if argv.inplace else parent / f'{p_src.stem}-wim.{suffix}'
 
         if argv.quantize:
             img = img.quantize()  # type: ignore
@@ -78,7 +78,7 @@ def main(args=None) -> None:
 
         # Make sure the image orientation is correct.
         # This must happen after scaling the image and before adding text or images.
-        img = ImageOps.exif_transpose(img)
+        img = ImageOps.exif_transpose(img)  # type: ignore
 
         if argv.text:
             img = add_text(img, argv.font, argv.font_size, argv.text)

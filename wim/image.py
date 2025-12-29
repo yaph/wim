@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont
 
 IMAGE_FORMATS = ['bmp', 'jpeg', 'jpg', 'png', 'webp']
 MODE = 'RGBA'
@@ -156,7 +156,7 @@ def load_font(font_path, font_size):
 
     try:
         return ImageFont.truetype(font_path, font_size)
-    except (OSError, IOError, PermissionError) as e:
+    except (OSError, PermissionError) as e:
         print(f"Warning: Could not load font '{font_path}': {e}")
         print('Falling back to default font')
         return ImageFont.load_default()
