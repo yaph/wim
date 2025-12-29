@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 
+IMAGE_FORMATS = ['bmp', 'jpeg', 'jpg', 'png', 'webp']
 MODE = 'RGBA'
 BLACK = (0, 0, 0, 255)
 WHITE = (255, 255, 255, 255)
@@ -113,7 +114,7 @@ def add_image(img, overlay_path, position='bottom-right', padding=0, scale=None,
 
     # Scale if requested
     if scale:
-        overlay_img = overlay_img.resize(scale, Image.Resampling.LANCZOS)
+        overlay_img.thumbnail(scale)
 
     # Adjust opacity if needed
     if opacity < FULL_OPACITY:
