@@ -103,7 +103,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --font FONT           Set the font family, default is arial.ttf.
+  --font FONT           Path to TrueType font file. If not specified, uses default font.
   --font-size FONT_SIZE
                         Set the font size, default is 16.
   --format {bmp,jpeg,jpg,png,webp}
