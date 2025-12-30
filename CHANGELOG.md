@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [1.2.0](https://github.com/yaph/wim/releases/tag/1.2.0) - 2025-12-29
+
+<small>[Compare with 1.1.0](https://github.com/yaph/wim/compare/1.1.0...1.2.0)</small>
+
+### Fixed
+
+- Fix typing issues ([5ae06aa](https://github.com/yaph/wim/commit/5ae06aaacb585e31f93df8cb08e04122f6679ebc) by Ramiro Gómez).
+- Fix issues with EXIF orientation when adding text or watermark images. ([11ee5f1](https://github.com/yaph/wim/commit/11ee5f1c38df87eb596030dcc2e868192513e3aa) by Ramiro Gómez).
+
+### Removed
+
+- Remove arial as default font and load library default. Gracefully handle missing fonts if specified. ([716f7b8](https://github.com/yaph/wim/commit/716f7b84e9dc633961addd9d158b5463a4fe7c02) by Ramiro Gómez).
+
 ## [1.1.0](https://github.com/yaph/wim/releases/tag/1.1.0) - 2025-12-29
 
 <small>[Compare with 1.0.0](https://github.com/yaph/wim/compare/1.0.0...1.1.0)</small>
