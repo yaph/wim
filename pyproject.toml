@@ -56,7 +56,9 @@ clean = [
 qa = [
   "hatch run type_check",
   "hatch test",
-  "hatch fmt"
+  "hatch fmt",
+  "complexipy .",
+  "skylos ."
 ]
 release = [
   "hatch run clean",
