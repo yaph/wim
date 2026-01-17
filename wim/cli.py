@@ -5,10 +5,10 @@ from pathlib import Path
 
 from PIL import Image, ImageOps
 
-from wim.image import IMAGE_FORMATS, add_image, add_text, set_background
+from wim.image import IMAGE_FORMATS, add_image, add_text, get_metadata, set_background
 
 
-def main(args=None) -> None:
+def get_args(args=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Add text and manipulate images.')
 
     parser.add_argument(
@@ -54,31 +54,47 @@ def main(args=None) -> None:
         '-i', '--inplace', action='store_true', help='Edit the image in place (overwrites original).'
     )
     output_group.add_argument('-o', '--outdir', help='Output directory for processed images.')
-
     argv = parser.parse_args(args)
 
     if argv.inplace and argv.format:
         parser.error('--format cannot be used with --inplace (inplace preserves original format)')
 
+    return argv
+
+
+def get_dst(src: Path, argv: argparse.Namespace) -> Path:
+    """Return destination path."""
+
+    if argv.inplace:
+        return src
+
+    parent = Path(argv.outdir) if argv.outdir else src.parent
+    parent.mkdir(exist_ok=True)
+    suffix = argv.format if argv.format else src.suffix.lstrip('.')
+    return parent / f'{src.stem}-wim.{suffix}'
+
+
+def main(args=None) -> None:
+    argv = get_args(args)
+
     for name in argv.filename:
         img = Image.open(name)
-        p_src = Path(name)
+        img_format = img.format
 
-        # Set destination path
-        parent = Path(argv.outdir) if argv.outdir else p_src.parent
-        parent.mkdir(exist_ok=True)
-        suffix = argv.format if argv.format else p_src.suffix.lstrip('.')
-        p_dst = p_src if argv.inplace else parent / f'{p_src.stem}-wim.{suffix}'
+        src = Path(name)
+        dst = get_dst(src, argv)
+
+        # First make sure the image orientation is correct.
+        img = ImageOps.exif_transpose(img)  # type: ignore
+
+        # Extract metadata before further image processing
+        metadata = get_metadata(img)
 
         if argv.quantize:
             img = img.quantize()  # type: ignore
 
         if argv.scale:
             img.thumbnail(argv.scale)
-
-        # Make sure the image orientation is correct.
-        # This must happen after scaling the image and before adding text or images.
-        img = ImageOps.exif_transpose(img)  # type: ignore
 
         if argv.text:
             img = add_text(img, argv.font, argv.font_size, argv.text)
@@ -93,13 +109,18 @@ def main(args=None) -> None:
             )
 
         # Convert RGBA to RGB for JPEG files
-        if p_dst.suffix.lower() in ['.jpg', '.jpeg'] and img.mode == 'RGBA':
+        if img_format == 'JPEG' and img.mode == 'RGBA':
             img = set_background(img)
 
-        # Keep timestamps of original image. The stat call must take place before save because of possible inplace edits.
-        stat = p_src.stat()
-        img.save(p_dst)
-        os.utime(p_dst, (stat.st_atime, stat.st_mtime))
+        # The stat call must take place before save because inplace edits modify the original image.
+        stat = src.stat()
+
+        print(f'Save image as: {dst}')
+        # Add back original metadata when saving image
+        img.save(dst, **metadata)
+
+        # Keep timestamps of original image.
+        os.utime(dst, (stat.st_atime, stat.st_mtime))
 
 
 if __name__ == '__main__':

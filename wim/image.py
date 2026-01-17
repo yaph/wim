@@ -73,7 +73,7 @@ def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', p
     bbox = font.getbbox(text)
     text_width = bbox[2] - bbox[0]
     text_height = bbox[3] - bbox[1]
-    text_img_height = int(text_height * 1.5)
+    text_img_height = int(text_height * 1.7)
     text_img_width = int(text_width * 1.1)
 
     # Create a transparent overlay the same size as the base image
@@ -96,10 +96,9 @@ def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', p
 
     # Calculate centered text position
     text_x = x_pos + (text_img_width - text_width) / 2
-    text_y = y_pos + (text_img_height - text_height) / 2
 
     # Draw text with full opacity (alpha = 255)
-    text_draw.text((text_x, text_y), text, WHITE, font=font)
+    text_draw.text((text_x, y_pos), text, WHITE, font=font)
 
     # Composite the text overlay
     return Image.alpha_composite(base_layer, text_overlay)
@@ -138,6 +137,39 @@ def ensure_rgba(img):
     return img if img.mode == MODE else img.convert(MODE)
 
 
+def get_metadata(img):
+    """Extract all available metadata from an image."""
+    metadata = {}
+
+    if not hasattr(img, 'info'):
+        return metadata
+
+    info = img.info
+
+    # EXIF data (JPEG) - contains GPS, camera info, etc.
+    if 'exif' in info:
+        metadata['exif'] = info['exif']
+
+    # ICC color profile
+    if 'icc_profile' in info:
+        metadata['icc_profile'] = info['icc_profile']
+
+    # DPI/resolution
+    if 'dpi' in info:
+        metadata['dpi'] = info['dpi']
+
+    # PNG metadata
+    if 'transparency' in info:
+        metadata['transparency'] = info['transparency']
+
+    # Other common metadata
+    for key in ['gamma', 'chromaticity', 'photoshop', 'iptc']:
+        if key in info:
+            metadata[key] = info[key]
+
+    return metadata
+
+
 def load_font(font_path, font_size):
     """
     Load a TrueType font with fallback to default font.
@@ -152,7 +184,7 @@ def load_font(font_path, font_size):
     # If no font path provided, use default immediately
     if font_path is None:
         print('Using default font (TrueType fonts not available)')
-        return ImageFont.load_default()
+        return ImageFont.load_default(size=font_size)
 
     try:
         return ImageFont.truetype(font_path, font_size)
