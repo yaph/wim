@@ -6,6 +6,7 @@ from pathlib import Path
 from PIL import Image, ImageOps
 
 from wim.image import IMAGE_FORMATS, add_image, add_text, get_metadata, set_background
+from wim.__about__ import __version__
 
 
 def get_args(args=None) -> argparse.Namespace:
@@ -48,6 +49,7 @@ def get_args(args=None) -> argparse.Namespace:
         metavar=('WIDTH', 'HEIGHT'),
         help='Scale watermark to WIDTH HEIGHT in pixels.',
     )
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
 
     output_group = parser.add_mutually_exclusive_group()
     output_group.add_argument(
