@@ -3,4 +3,4 @@
 # SPDX-License-Identifier: MIT
 __author__ = 'Ramiro Gómez'
 __email__ = 'code@ramiro.org'
-__version__ = '1.2.0'
+__version__ = '2.0.0'
