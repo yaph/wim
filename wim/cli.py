@@ -5,8 +5,8 @@ from pathlib import Path
 
 from PIL import Image, ImageOps
 
-from wim.image import IMAGE_FORMATS, add_image, add_text, get_metadata, set_background
 from wim.__about__ import __version__
+from wim.image import IMAGE_FORMATS, add_image, add_text, get_metadata, set_background
 
 
 def get_args(args=None) -> argparse.Namespace:
@@ -33,6 +33,7 @@ def get_args(args=None) -> argparse.Namespace:
         metavar=('WIDTH', 'HEIGHT'),
         help='Set the maximum width and height as integer values.',
     )
+    parser.add_argument('--strip', action='store_true', help='Strip image of all metadata.')
     parser.add_argument('-t', '--text', help='Set the text to append at the bottom of the image.')
     parser.add_argument('-w', '--watermark', help='Path to watermark/overlay image to add to the image.')
     parser.add_argument(
@@ -90,7 +91,7 @@ def main(args=None) -> None:
         img = ImageOps.exif_transpose(img)  # type: ignore
 
         # Extract metadata before further image processing
-        metadata = get_metadata(img)
+        metadata = {} if argv.strip else get_metadata(img)
 
         if argv.quantize:
             img = img.quantize()  # type: ignore
