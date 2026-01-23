@@ -23,7 +23,7 @@ def get_args(args=None) -> argparse.Namespace:
         help='Output format (overrides input format)',
     )
     parser.add_argument(
-        '-q', '--quantize', action='store_true', help='Quantize the image to reduce its filesize, default is False.'
+        '--quantize', action='store_true', help='Quantize the image to reduce its filesize, default is False.'
     )
     parser.add_argument(
         '-s',
