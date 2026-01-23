@@ -23,6 +23,9 @@ def get_args(args=None) -> argparse.Namespace:
         help='Output format (overrides input format)',
     )
     parser.add_argument(
+        '--quality', type=int, help='Output quality 1-100 (lower = smaller file). Works with JPEG and WebP.'
+    )
+    parser.add_argument(
         '--quantize', action='store_true', help='Quantize the image to reduce its filesize, default is False.'
     )
     parser.add_argument(
@@ -91,7 +94,16 @@ def main(args=None) -> None:
         img = ImageOps.exif_transpose(img)  # type: ignore
 
         # Extract metadata before further image processing
-        metadata = {} if argv.strip else get_metadata(img)
+        save_kwargs = {} if argv.strip else get_metadata(img)
+
+        if argv.quality:
+            if img_format in ('JPEG', 'WEBP'):
+                save_kwargs['quality'] = argv.quality
+                save_kwargs['optimize'] = True
+            elif img_format == 'PNG':
+                # PNG doesn't use quality, but we can optimize
+                save_kwargs['optimize'] = True
+                save_kwargs['compress_level'] = 9
 
         if argv.quantize:
             img = img.quantize()  # type: ignore
@@ -119,8 +131,7 @@ def main(args=None) -> None:
         stat = src.stat()
 
         print(f'Save image as: {dst}')
-        # Add back original metadata when saving image
-        img.save(dst, **metadata)
+        img.save(dst, **save_kwargs)
 
         # Keep timestamps of original image.
         os.utime(dst, (stat.st_atime, stat.st_mtime))
