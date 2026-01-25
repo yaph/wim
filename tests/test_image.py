@@ -81,7 +81,7 @@ def test_add_text_changes_image(monkeypatch):
 
     # Add text and assert resulting image differs from original bytes
     result = image.add_text(
-        base, font='dummy.ttf', font_size=12, text='hello', bg_alpha=64, position='bottom-right', padding=2
+        base, font_name='dummy.ttf', font_size=12, text='hello', bg_alpha=64, position='bottom-right', padding=2
     )
     assert isinstance(result, Image.Image)
     assert result.size == base.size
