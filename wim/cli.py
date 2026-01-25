@@ -6,7 +6,16 @@ from pathlib import Path
 from PIL import Image, ImageOps
 
 from wim.__about__ import __version__
-from wim.image import IMAGE_FORMATS, add_image, add_text, get_metadata, set_background
+from wim.image import (
+    IMAGE_FORMATS,
+    QUANTIZE_FORMATS,
+    RGBA_FORMATS,
+    add_image,
+    add_text,
+    get_metadata,
+    get_quality,
+    set_background,
+)
 
 
 def get_args(args=None) -> argparse.Namespace:
@@ -15,19 +24,21 @@ def get_args(args=None) -> argparse.Namespace:
     parser.add_argument(
         'filename', type=str, nargs='+', help='Input image filename. Use wildcard to process multiple files.'
     )
-    parser.add_argument('--font', help='Path to TrueType font file. If not specified, uses system default font.')
+    parser.add_argument(
+        '--font',
+        help='Font name (e.g., DejaVuSans, Arial) or path to TrueType font file (.ttf). Falls back to system default if not specified or found.',
+    )
     parser.add_argument('--font-size', type=int, default=16, help='Set the font size, default is 16.')
     parser.add_argument(
         '--format',
         choices=IMAGE_FORMATS,
         help='Output format (overrides input format)',
     )
+    parser.add_argument('--output-label', default='-wim', help='Label to append to the output file name.')
     parser.add_argument(
         '--quality', type=int, help='Output quality 1-100 (lower = smaller file). Works with JPEG and WebP.'
     )
-    parser.add_argument(
-        '--quantize', action='store_true', help='Quantize the image to reduce its filesize, default is False.'
-    )
+    parser.add_argument('--quantize', type=int, help='Quantize the image with the desired number of colors, <= 256.')
     parser.add_argument(
         '-s',
         '--scale',
@@ -69,72 +80,77 @@ def get_args(args=None) -> argparse.Namespace:
 
 
 def get_dst(src: Path, argv: argparse.Namespace) -> Path:
-    """Return destination path."""
+    """Return destination path and ensure argv.format is set."""
 
     if argv.inplace:
         return src
 
     parent = Path(argv.outdir) if argv.outdir else src.parent
     parent.mkdir(exist_ok=True)
-    suffix = argv.format if argv.format else src.suffix.lstrip('.')
-    return parent / f'{src.stem}-wim.{suffix}'
+    argv.format = argv.format if argv.format else src.suffix.lstrip('.').lower()
+    return parent / f'{src.stem}{argv.output_label}.{argv.format}'
+
+
+def proc_image(img: Image.Image, argv: argparse.Namespace):
+    # First make sure the image orientation is correct.
+    img = ImageOps.exif_transpose(img)  # type: ignore
+
+    # Extract metadata before further image processing
+    save_kwargs = {} if argv.strip else get_metadata(img)
+
+    # Quality settings are applied when saving the image.
+    if argv.quality:
+        save_kwargs.update(get_quality(argv.quality, argv.format))
+
+    if argv.quantize:
+        if argv.format not in QUANTIZE_FORMATS:
+            print(f'Skipping quantization, not supported for: {argv.format}')
+        else:
+            img = img.quantize(colors=argv.quantize)  # type: ignore
+
+    if argv.scale:
+        img.thumbnail(argv.scale)
+
+    if argv.text:
+        img = add_text(img, argv.font, argv.font_size, argv.text)
+
+    if argv.watermark:
+        img = add_image(
+            img,
+            argv.watermark,
+            position=argv.watermark_position,
+            scale=argv.watermark_scale,
+            opacity=argv.watermark_opacity,
+        )
+
+    # Turn into RGB with black background if necessary
+    if img.mode == 'RGBA' and argv.format not in RGBA_FORMATS:
+        img = set_background(img)
+
+    return img, save_kwargs
+
+
+def proc_file(name, argv: argparse.Namespace):
+    img = Image.open(name)
+
+    src = Path(name)
+    # The stat call must take place before save because inplace edits modify the original image.
+    stat = src.stat()
+    dst = get_dst(src, argv)
+
+    # Process and save image
+    img, save_kwargs = proc_image(img, argv)
+    print(f'Save image as: {dst}')
+    img.save(dst, **save_kwargs)
+
+    # Keep timestamps of original image.
+    os.utime(dst, (stat.st_atime, stat.st_mtime))
 
 
 def main(args=None) -> None:
     argv = get_args(args)
-
     for name in argv.filename:
-        img = Image.open(name)
-        img_format = img.format
-
-        src = Path(name)
-        dst = get_dst(src, argv)
-
-        # First make sure the image orientation is correct.
-        img = ImageOps.exif_transpose(img)  # type: ignore
-
-        # Extract metadata before further image processing
-        save_kwargs = {} if argv.strip else get_metadata(img)
-
-        if argv.quality:
-            if img_format in ('JPEG', 'WEBP'):
-                save_kwargs['quality'] = argv.quality
-                save_kwargs['optimize'] = True
-            elif img_format == 'PNG':
-                # PNG doesn't use quality, but we can optimize
-                save_kwargs['optimize'] = True
-                save_kwargs['compress_level'] = 9
-
-        if argv.quantize:
-            img = img.quantize()  # type: ignore
-
-        if argv.scale:
-            img.thumbnail(argv.scale)
-
-        if argv.text:
-            img = add_text(img, argv.font, argv.font_size, argv.text)
-
-        if argv.watermark:
-            img = add_image(
-                img,
-                argv.watermark,
-                position=argv.watermark_position,
-                scale=argv.watermark_scale,
-                opacity=argv.watermark_opacity,
-            )
-
-        # Convert RGBA to RGB for JPEG files
-        if img_format == 'JPEG' and img.mode == 'RGBA':
-            img = set_background(img)
-
-        # The stat call must take place before save because inplace edits modify the original image.
-        stat = src.stat()
-
-        print(f'Save image as: {dst}')
-        img.save(dst, **save_kwargs)
-
-        # Keep timestamps of original image.
-        os.utime(dst, (stat.st_atime, stat.st_mtime))
+        proc_file(name, argv)
 
 
 if __name__ == '__main__':

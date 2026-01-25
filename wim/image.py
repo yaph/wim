@@ -1,6 +1,11 @@
 from PIL import Image, ImageDraw, ImageFont
 
-IMAGE_FORMATS = ['bmp', 'jpeg', 'jpg', 'png', 'webp']
+IMAGE_FORMATS = {'bmp', 'gif', 'ico', 'jpeg', 'jpg', 'png', 'webp'}
+QUALITY_FORMATS = {'jpeg', 'jpg', 'webp'}
+QUANTIZE_FORMATS = {'png', 'gif'}
+OPTIMIZE_FORMATS = {'png', 'gif'}
+RGBA_FORMATS = {'png', 'webp', 'gif', 'ico'}
+
 MODE = 'RGBA'
 BLACK = (0, 0, 0, 255)
 WHITE = (255, 255, 255, 255)
@@ -73,7 +78,7 @@ def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', p
     bbox = font.getbbox(text)
     text_width = bbox[2] - bbox[0]
     text_height = bbox[3] - bbox[1]
-    text_img_height = int(text_height * 1.7)
+    text_img_height = int(text_height * 1.5)
     text_img_width = int(text_width * 1.1)
 
     # Create a transparent overlay the same size as the base image
@@ -170,6 +175,21 @@ def get_metadata(img):
     return metadata
 
 
+def get_quality(quality: int, img_format: str) -> dict:
+    options = {}
+
+    if img_format in QUALITY_FORMATS:
+        options['quality'] = quality
+        options['optimize'] = True
+    elif img_format in OPTIMIZE_FORMATS:
+        # PNG and GIF don't use quality parameter, but support optimization
+        options['optimize'] = True
+        if img_format == 'png':
+            options['compress_level'] = 9
+
+    return options
+
+
 def load_font(font_path, font_size):
     """
     Load a TrueType font with fallback to default font.
@@ -183,14 +203,14 @@ def load_font(font_path, font_size):
     """
     # If no font path provided, use default immediately
     if font_path is None:
-        print('Using default font (TrueType fonts not available)')
+        print('Using system default font.')
         return ImageFont.load_default(size=font_size)
 
     try:
         return ImageFont.truetype(font_path, font_size)
     except (OSError, PermissionError) as e:
         print(f"Warning: Could not load font '{font_path}': {e}")
-        print('Falling back to default font')
+        print('Falling back to system default font')
         return ImageFont.load_default()
 
 
