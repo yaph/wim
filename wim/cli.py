@@ -49,6 +49,7 @@ def get_args(args=None) -> argparse.Namespace:
     )
     parser.add_argument('--strip', action='store_true', help='Strip image of all metadata.')
     parser.add_argument('-t', '--text', help='Set the text to append at the bottom of the image.')
+    parser.add_argument('--trim', action='store_true', help='Trim uniform-color borders from image edges.')
     parser.add_argument('-w', '--watermark', help='Path to watermark/overlay image to add to the image.')
     parser.add_argument(
         '--watermark-position',
@@ -95,12 +96,16 @@ def proc_image(img: Image.Image, argv: argparse.Namespace):
     # First make sure the image orientation is correct.
     img = ImageOps.exif_transpose(img)  # type: ignore
 
-    # Extract metadata before further image processing
+    # Extract metadata before further image processing.
     save_kwargs = {} if argv.strip else get_metadata(img)
 
     # Quality settings are applied when saving the image.
     if argv.quality:
         save_kwargs.update(get_quality(argv.quality, argv.format))
+
+    # Apply trim before other image manipulations.
+    if argv.trim:
+        img = ImageOps.crop(img)
 
     if argv.quantize:
         if argv.format not in QUANTIZE_FORMATS:
