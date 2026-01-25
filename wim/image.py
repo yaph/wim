@@ -1,5 +1,32 @@
 from PIL import Image, ImageDraw, ImageFont
 
+"""
+This module provides utility functions for image manipulation using the Python Imaging Library (PIL).
+It includes functions for adding overlays, text, and metadata extraction, as well as image format
+handling and quality optimization.
+
+Functions:
+    - add_image: Blend an overlay image onto a base image with customizable position, scale, and opacity.
+    - add_text: Add text with a semi-transparent background to an image.
+    - calculate_position: Calculate the position for placing an overlay on a base image.
+    - ensure_rgba: Ensure an image is in RGBA mode.
+    - get_metadata: Extract metadata from an image, including EXIF, ICC profile, and other common metadata.
+    - get_quality: Generate quality and optimization options for saving images in specific formats.
+    - load_font: Load a TrueType font with fallback to the default system font.
+    - set_background: Convert an RGBA image to RGB mode with a black background.
+
+Constants:
+    - IMAGE_FORMATS: Supported image formats for processing.
+    - QUALITY_FORMATS: Formats that support quality optimization.
+    - QUANTIZE_FORMATS: Formats that support quantization.
+    - OPTIMIZE_FORMATS: Formats that support optimization.
+    - RGBA_FORMATS: Formats that support RGBA mode.
+    - MODE: Default image mode ('RGBA').
+    - BLACK: Black color in RGBA mode.
+    - WHITE: White color in RGBA mode.
+    - FULL_OPACITY: Maximum opacity value (255).
+"""
+
 IMAGE_FORMATS = {'bmp', 'gif', 'ico', 'jpeg', 'jpg', 'png', 'webp'}
 QUALITY_FORMATS = {'jpeg', 'jpg', 'webp'}
 QUANTIZE_FORMATS = {'png', 'gif'}
@@ -14,18 +41,25 @@ FULL_OPACITY = 255
 
 def add_image(img, overlay_path, position='bottom-right', padding=0, scale=None, opacity=FULL_OPACITY):
     """
-    Blend an image over the base image.
+    Blend an overlay image onto a base image at a specified position with optional scaling, padding, and opacity.
+
+    This function allows you to overlay an image onto a base image, with options to control the position, size, and transparency of the overlay. The resulting image is returned as a new PIL Image object.
 
     Args:
-        img: PIL Image object (base image)
-        overlay_path: Path to the overlay image file
-        position: Position of overlay ('top-left', 'top-right', 'bottom-left', 'bottom-right', 'center')
-        padding: Padding from edges in pixels
-        scale: Scale overlay to this size (width, height) or None to keep original size
-        opacity: Opacity of the overlay (0-255, default 255 for fully opaque)
+        img (PIL.Image.Image): The base image onto which the overlay will be added.
+        overlay_path (str): The file path to the overlay image.
+        position (str, optional): The position of the overlay on the base image.
+            Options are 'top-left', 'top-right', 'bottom-left', 'bottom-right', and 'center'.
+            Defaults to 'bottom-right'.
+        padding (int, optional): The padding in pixels between the overlay and the edges of the base image.
+            Defaults to 0.
+        scale (tuple[int, int] or None, optional): The desired size (width, height) to scale the overlay image.
+            If None, the overlay retains its original size. Defaults to None.
+        opacity (int, optional): The opacity level of the overlay, ranging from 0 (completely transparent)
+            to 255 (fully opaque). Defaults to FULL_OPACITY (255).
 
     Returns:
-        PIL Image object with overlay added
+        PIL.Image.Image: A new image with the overlay blended onto the base image.
     """
 
     # Load and prepare overlay image
@@ -59,19 +93,21 @@ def add_image(img, overlay_path, position='bottom-right', padding=0, scale=None,
 
 def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', padding=0):
     """
-    Add text with a semi-transparent background to an image.
+    Adds text with a semi-transparent background to an image.
 
     Args:
-        img: PIL Image object
-        font: Path to font file
-        font_size: Size of the font
-        text: Text to add
-        bg_alpha: Alpha value for background (0-255, default 32)
-        position: Position of text ('top-left', 'top-right', 'bottom-left', 'bottom-right', 'center')
-        padding: Padding from edges in pixels
+        img (PIL.Image.Image): The base image to which the text will be added.
+        font (str): Path to the font file to be used for the text.
+        font_size (int): Size of the font to be used.
+        text (str): The text to be added to the image.
+        bg_alpha (int, optional): Alpha value (transparency) for the background rectangle.
+            Defaults to 32 (semi-transparent).
+        position (str, optional): Position of the text on the image. Can be 'bottom-right',
+            'bottom-left', 'top-right', 'top-left', or other custom positions. Defaults to 'bottom-right'.
+        padding (int, optional): Padding around the text background rectangle. Defaults to 0.
 
     Returns:
-        PIL Image object with text added
+        PIL.Image.Image: The image with the added text and background.
     """
 
     font = load_font(font, font_size)
@@ -109,18 +145,26 @@ def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', p
     return Image.alpha_composite(base_layer, text_overlay)
 
 
-def calculate_position(base_size, overlay_size, position, padding):
+def calculate_position(base_size, overlay_size, position, padding) -> tuple:
     """
-    Calculate the position for placing an overlay on a base image.
+    This function determines the (x, y) coordinates for positioning an overlay image
+    on top of a base image, based on the specified position and padding.
 
     Args:
-        base_size: Tuple of (width, height) for the base image
-        overlay_size: Tuple of (width, height) for the overlay
-        position: One of 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'
-        padding: Padding in pixels from the edges
+        base_size (tuple): A tuple (width, height) representing the dimensions of the base image.
+        overlay_size (tuple): A tuple (width, height) representing the dimensions of the overlay image.
+        position (str): A string specifying the desired position of the overlay.
+            Options include:
+            - 'top-left': Places the overlay at the top-left corner.
+            - 'top-right': Places the overlay at the top-right corner.
+            - 'bottom-left': Places the overlay at the bottom-left corner.
+            - 'bottom-right': Places the overlay at the bottom-right corner.
+            - 'center': Places the overlay at the center of the base image.
+        padding (int): The number of pixels to pad from the edges of the base image.
 
     Returns:
-        Tuple of (x, y) coordinates for the overlay position
+        tuple: A tuple (x, y) representing the calculated coordinates for the overlay position.
+        If the specified position is invalid, defaults to 'bottom-right'.
     """
     base_width, base_height = base_size
     overlay_width, overlay_height = overlay_size
@@ -137,13 +181,20 @@ def calculate_position(base_size, overlay_size, position, padding):
 
 
 def ensure_rgba(img):
-    """Convert to RGBA if needed."""
+    """Ensure the image is in RGBA mode."""
 
     return img if img.mode == MODE else img.convert(MODE)
 
 
 def get_metadata(img):
-    """Extract all available metadata from an image."""
+    """Extract metadata from an image.
+
+    Args:
+        img: PIL Image object
+
+    Returns:
+        dict: Metadata dictionary
+    """
     metadata = {}
 
     if not hasattr(img, 'info'):
@@ -176,6 +227,20 @@ def get_metadata(img):
 
 
 def get_quality(quality: int, img_format: str) -> dict:
+    """
+    Generate image processing options based on the provided quality and format.
+
+    Args:
+        quality (int): The quality level for the image (used for formats that support it).
+        img_format (str): The format of the image (e.g., 'jpeg', 'png', 'gif').
+
+    Returns:
+        dict: A dictionary containing options for image processing. This may include:
+            - 'quality': The quality level (if applicable to the format).
+            - 'optimize': A boolean indicating whether optimization is enabled.
+            - 'compress_level': The compression level (only for PNG format).
+    """
+
     options = {}
 
     if img_format in QUALITY_FORMATS:
