@@ -28,7 +28,7 @@ def get_args(args=None) -> argparse.Namespace:
         '--font',
         help='Font name (e.g., DejaVuSans, Arial) or path to TrueType font file (.ttf). Falls back to system default if not specified or found.',
     )
-    parser.add_argument('--font-size', type=int, default=16, help='Set the font size, default is 16.')
+    parser.add_argument('--font-size', type=int, help='Set the font size, requires font setting.')
     parser.add_argument(
         '--format',
         choices=IMAGE_FORMATS,
@@ -76,6 +76,9 @@ def get_args(args=None) -> argparse.Namespace:
 
     if argv.inplace and argv.format:
         parser.error('--format cannot be used with --inplace (inplace preserves original format)')
+
+    if argv.font_size and not argv.font:
+        parser.error('--font-size requires --font to be specified')
 
     return argv
 

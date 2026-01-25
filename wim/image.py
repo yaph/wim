@@ -281,10 +281,9 @@ def load_font(font_path: str, font_size: int) -> ImageFont.FreeTypeFont | ImageF
     Returns:
         ImageFont object
     """
-    # If no font path provided, use default immediately
     if font_path is None:
         print('Using system default font.')
-        return ImageFont.load_default(size=font_size)
+        return ImageFont.load_default()
 
     try:
         return ImageFont.truetype(font_path, font_size)
