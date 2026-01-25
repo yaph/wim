@@ -39,7 +39,14 @@ WHITE = (255, 255, 255, 255)
 FULL_OPACITY = 255
 
 
-def add_image(img, overlay_path, position='bottom-right', padding=0, scale=None, opacity=FULL_OPACITY):
+def add_image(
+    img: Image.Image,
+    overlay_path: str,
+    position: str = 'bottom-right',
+    padding: int = 0,
+    scale: tuple[int, int] | None = None,
+    opacity: int = FULL_OPACITY,
+):
     """
     Blend an overlay image onto a base image at a specified position with optional scaling, padding, and opacity.
 
@@ -91,13 +98,21 @@ def add_image(img, overlay_path, position='bottom-right', padding=0, scale=None,
     return Image.alpha_composite(ensure_rgba(img), canvas)
 
 
-def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', padding=0):
+def add_text(
+    img: Image.Image,
+    font_name: str,
+    font_size: int,
+    text: str,
+    bg_alpha: int = 32,
+    position: str = 'bottom-right',
+    padding: int = 0,
+):
     """
     Adds text with a semi-transparent background to an image.
 
     Args:
         img (PIL.Image.Image): The base image to which the text will be added.
-        font (str): Path to the font file to be used for the text.
+        font_name (str): Name of the font or path to the font file to be used for the text.
         font_size (int): Size of the font to be used.
         text (str): The text to be added to the image.
         bg_alpha (int, optional): Alpha value (transparency) for the background rectangle.
@@ -110,7 +125,7 @@ def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', p
         PIL.Image.Image: The image with the added text and background.
     """
 
-    font = load_font(font, font_size)
+    font = load_font(font_name, font_size)
     bbox = font.getbbox(text)
     text_width = bbox[2] - bbox[0]
     text_height = bbox[3] - bbox[1]
@@ -145,7 +160,7 @@ def add_text(img, font, font_size, text, bg_alpha=32, position='bottom-right', p
     return Image.alpha_composite(base_layer, text_overlay)
 
 
-def calculate_position(base_size, overlay_size, position, padding) -> tuple:
+def calculate_position(base_size: tuple, overlay_size: tuple, position: str, padding: int) -> tuple:
     """
     This function determines the (x, y) coordinates for positioning an overlay image
     on top of a base image, based on the specified position and padding.
@@ -180,13 +195,13 @@ def calculate_position(base_size, overlay_size, position, padding) -> tuple:
     return positions.get(position, positions['bottom-right'])
 
 
-def ensure_rgba(img):
+def ensure_rgba(img: Image.Image) -> Image.Image:
     """Ensure the image is in RGBA mode."""
 
     return img if img.mode == MODE else img.convert(MODE)
 
 
-def get_metadata(img):
+def get_metadata(img: Image.Image) -> dict:
     """Extract metadata from an image.
 
     Args:
@@ -195,7 +210,7 @@ def get_metadata(img):
     Returns:
         dict: Metadata dictionary
     """
-    metadata = {}
+    metadata: dict = {}
 
     if not hasattr(img, 'info'):
         return metadata
@@ -255,7 +270,7 @@ def get_quality(quality: int, img_format: str) -> dict:
     return options
 
 
-def load_font(font_path, font_size):
+def load_font(font_path: str, font_size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     """
     Load a TrueType font with fallback to default font.
 
@@ -279,7 +294,7 @@ def load_font(font_path, font_size):
         return ImageFont.load_default()
 
 
-def set_background(img):
+def set_background(img: Image.Image) -> Image.Image:
     """
     Convert RGBA image to RGB with black background.
 
