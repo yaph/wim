@@ -100,29 +100,30 @@ def add_image(
 
 def add_text(
     img: Image.Image,
-    font_name: str,
+    font_name: str | None,
     font_size: int,
     text: str,
     bg_alpha: int = 32,
     position: str = 'bottom-right',
     padding: int = 0,
-):
+) -> Image.Image:
     """
-    Adds text with a semi-transparent background to an image.
+    Add text with semi-transparent background to an image.
 
     Args:
-        img (PIL.Image.Image): The base image to which the text will be added.
-        font_name (str): Name of the font or path to the font file to be used for the text.
-        font_size (int): Size of the font to be used.
-        text (str): The text to be added to the image.
-        bg_alpha (int, optional): Alpha value (transparency) for the background rectangle.
-            Defaults to 32 (semi-transparent).
-        position (str, optional): Position of the text on the image. Can be 'bottom-right',
-            'bottom-left', 'top-right', 'top-left', or other custom positions. Defaults to 'bottom-right'.
-        padding (int, optional): Padding around the text background rectangle. Defaults to 0.
+        img: Base image (will be converted to RGBA if needed)
+        font_name: Font name or path to .ttf file (None for default)
+        font_size: Font size in pixels
+        text: Text to overlay
+        bg_alpha: Background transparency 0-255 (0=transparent, 255=opaque)
+        position: One of 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'
+        padding: Padding from image edges in pixels
 
     Returns:
-        PIL.Image.Image: The image with the added text and background.
+        Image with text overlay in RGBA mode
+
+    Raises:
+        ValueError: If bg_alpha not in range 0-255
     """
 
     font = load_font(font_name, font_size)
@@ -270,25 +271,25 @@ def get_quality(quality: int, img_format: str) -> dict:
     return options
 
 
-def load_font(font_path: str, font_size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+def load_font(font_name: str | None, font_size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     """
     Load a TrueType font with fallback to default font.
 
     Args:
-        font_path: Path to TrueType font file or None
+        font_name: Name of or path to TrueType font file or None
         font_size: Size of the font (ignored for default font)
 
     Returns:
         ImageFont object
     """
-    if font_path is None:
+    if font_name is None:
         print('Using system default font.')
         return ImageFont.load_default()
 
     try:
-        return ImageFont.truetype(font_path, font_size)
+        return ImageFont.truetype(font_name, font_size)
     except (OSError, PermissionError) as e:
-        print(f"Warning: Could not load font '{font_path}': {e}")
+        print(f"Warning: Could not load font '{font_name}': {e}")
         print('Falling back to system default font')
         return ImageFont.load_default()
 
