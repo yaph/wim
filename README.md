@@ -90,10 +90,11 @@ wim --help
 
 <!-- START: DO NOT EDIT -->
 ```text
-usage: wim [-h] [--font FONT] [--font-size FONT_SIZE] [--format {bmp,jpeg,jpg,png,webp}] [-q]
-                             [-s WIDTH HEIGHT] [-t TEXT] [-w WATERMARK]
+usage: wim [-h] [--font FONT] [--font-size FONT_SIZE] [--format {bmp,jpeg,jpg,png,webp}] [--quality QUALITY]
+                             [--quantize] [-s WIDTH HEIGHT] [--strip] [-t TEXT] [-w WATERMARK]
                              [--watermark-position {top-left,top-right,bottom-left,bottom-right,center}]
-                             [--watermark-opacity WATERMARK_OPACITY] [--watermark-scale WIDTH HEIGHT] [-i | -o OUTDIR]
+                             [--watermark-opacity WATERMARK_OPACITY] [--watermark-scale WIDTH HEIGHT] [--version]
+                             [-i | -o OUTDIR]
                              filename [filename ...]
 
 Add text and manipulate images.
@@ -108,9 +109,11 @@ options:
                         Set the font size, default is 16.
   --format {bmp,jpeg,jpg,png,webp}
                         Output format (overrides input format)
-  -q, --quantize        Quantize the image to reduce its filesize, default is False.
+  --quality QUALITY     Output quality 1-100 (lower = smaller file). Works with JPEG and WebP.
+  --quantize            Quantize the image to reduce its filesize, default is False.
   -s WIDTH HEIGHT, --scale WIDTH HEIGHT
                         Set the maximum width and height as integer values.
+  --strip               Strip image of all metadata.
   -t TEXT, --text TEXT  Set the text to append at the bottom of the image.
   -w WATERMARK, --watermark WATERMARK
                         Path to watermark/overlay image to add to the image.
@@ -120,6 +123,7 @@ options:
                         Opacity of watermark 0-255 (default: 255).
   --watermark-scale WIDTH HEIGHT
                         Scale watermark to WIDTH HEIGHT in pixels.
+  --version             show program's version number and exit
   -i, --inplace         Edit the image in place (overwrites original).
   -o OUTDIR, --outdir OUTDIR
                         Output directory for processed images.
