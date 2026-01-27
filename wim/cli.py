@@ -18,23 +18,7 @@ from wim.image import (
 )
 
 
-def get_args(args=None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description='Add text and manipulate images.')
-
-    parser.add_argument(
-        'filename', type=str, nargs='+', help='Input image filename. Use wildcard to process multiple files.'
-    )
-    parser.add_argument(
-        '--font',
-        help='Font name (e.g., DejaVuSans, Arial) or path to TrueType font file (.ttf). Falls back to system default if not specified or found.',
-    )
-    parser.add_argument('--font-size', type=int, help='Set the font size, requires font setting.')
-    parser.add_argument(
-        '--format',
-        choices=IMAGE_FORMATS,
-        help='Output format (overrides input format)',
-    )
-    parser.add_argument('--output-label', default='-wim', help='Label to append to the output file name.')
+def add_optimize(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '--quality', type=int, help='Output quality 1-100 (lower = smaller file). Works with JPEG and WebP.'
     )
@@ -47,16 +31,19 @@ def get_args(args=None) -> argparse.Namespace:
         metavar=('WIDTH', 'HEIGHT'),
         help='Set the maximum width and height as integer values.',
     )
-    parser.add_argument('--strip', action='store_true', help='Strip image of all metadata.')
-    parser.add_argument('-t', '--text', help='Set the text to append at the bottom of the image.')
-    parser.add_argument('--trim', action='store_true', help='Trim uniform-color borders from image edges.')
-    parser.add_argument('-w', '--watermark', help='Path to watermark/overlay image to add to the image.')
+
+
+def add_textmark(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
-        '--watermark-position',
-        default='bottom-right',
-        choices=['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'],
-        help='Position of watermark (default: bottom-right).',
+        '--font',
+        help='Font name (e.g., DejaVuSans, Arial) or path to TrueType font file (.ttf). Falls back to system default if not specified or found.',
     )
+    parser.add_argument('--font-size', type=int, help='Set the font size, requires font setting.')
+    parser.add_argument('-t', '--text', help='Set the text to add to the image.')
+
+
+def add_watermark(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument('-w', '--watermark', help='Path to watermark/overlay image to add to the image.')
     parser.add_argument('--watermark-opacity', type=int, default=255, help='Opacity of watermark 0-255 (default: 255).')
     parser.add_argument(
         '--watermark-scale',
@@ -65,13 +52,38 @@ def get_args(args=None) -> argparse.Namespace:
         metavar=('WIDTH', 'HEIGHT'),
         help='Scale watermark to WIDTH HEIGHT in pixels.',
     )
-    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
+    parser.add_argument(
+        '--watermark-position',
+        default='bottom-right',
+        choices=['top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'],
+        help='Position of watermark (default: bottom-right).',
+    )
 
-    output_group = parser.add_mutually_exclusive_group()
-    output_group.add_argument(
+
+def get_args(args=None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description='Edit, optimize, and watermark images from the command line.')
+
+    parser.add_argument(
+        'filename', type=str, nargs='+', help='Input image filename. Use wildcard to process multiple files.'
+    )
+
+    mxg = parser.add_mutually_exclusive_group()
+    mxg.add_argument(
         '-i', '--inplace', action='store_true', help='Edit the image in place (overwrites original).'
     )
-    output_group.add_argument('-o', '--outdir', help='Output directory for processed images.')
+    mxg.add_argument('-o', '--outdir', help='Output directory for processed images.')
+
+    parser.add_argument('--strip', action='store_true', help='Strip image of all metadata.')
+    parser.add_argument('--trim', action='store_true', help='Trim uniform-color borders from image edges.')
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
+
+    parser.add_argument('--format', choices=IMAGE_FORMATS, help='Set the output format. If not set, original format is used.')
+    parser.add_argument('--output-label', default='.wim', help='Label to append to the output file name. Ignored if --inplace is used.')
+
+    add_optimize(parser)
+    add_textmark(parser)
+    add_watermark(parser)
+
     argv = parser.parse_args(args)
 
     if argv.inplace and argv.format:
