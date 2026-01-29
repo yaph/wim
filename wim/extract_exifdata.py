@@ -56,10 +56,7 @@ def main():
         if not (exif_data := img._getexif()):  # noqa: SLF001
             print(f'No EXIF data found in {filename}')
             continue
-        exif = {
-            PIL.ExifTags.TAGS.get(k, k): convert_exif_value(v)
-            for k, v in exif_data.items()
-        }
+        exif = {PIL.ExifTags.TAGS.get(k, k): convert_exif_value(v) for k, v in exif_data.items()}
         if argv.convert_gps and 'GPSInfo' in exif:
             exif['GPSInfo'] = convert_gps_to_decimal(exif['GPSInfo'])
         data_file = Path(filename).with_suffix('.exif.json')

@@ -68,17 +68,19 @@ def get_args(args=None) -> argparse.Namespace:
     )
 
     mxg = parser.add_mutually_exclusive_group()
-    mxg.add_argument(
-        '-i', '--inplace', action='store_true', help='Edit the image in place (overwrites original).'
-    )
+    mxg.add_argument('-i', '--inplace', action='store_true', help='Edit the image in place (overwrites original).')
     mxg.add_argument('-o', '--outdir', help='Output directory for processed images.')
 
     parser.add_argument('--strip', action='store_true', help='Strip image of all metadata.')
     parser.add_argument('--trim', action='store_true', help='Trim uniform-color borders from image edges.')
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
 
-    parser.add_argument('--format', choices=IMAGE_FORMATS, help='Set the output format. If not set, original format is used.')
-    parser.add_argument('--output-label', default='.wim', help='Label to append to the output file name. Ignored if --inplace is used.')
+    parser.add_argument(
+        '--format', choices=IMAGE_FORMATS, help='Set the output format. If not set, original format is used.'
+    )
+    parser.add_argument(
+        '--output-label', default='.wim', help='Label to append to the output file name. Ignored if --inplace is used.'
+    )
 
     add_optimize(parser)
     add_textmark(parser)
