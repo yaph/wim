@@ -36,7 +36,7 @@ def add_optimize(parser: argparse.ArgumentParser) -> None:
 def add_textmark(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '--font',
-        help='Font name (e.g., DejaVuSans, Arial) or path to TrueType font file (.ttf). Falls back to system default if not specified or found.',
+        help='Font name (e.g., DejaVuSans, Arial) or path to TrueType font file (.ttf), requires font size setting. Falls back to system default if not specified or found.',
     )
     parser.add_argument('--font-size', type=int, help='Set the font size, requires font setting.')
     parser.add_argument('-t', '--text', help='Set the text to add to the image.')
@@ -91,8 +91,9 @@ def get_args(args=None) -> argparse.Namespace:
     if argv.inplace and argv.format:
         parser.error('--format cannot be used with --inplace (inplace preserves original format)')
 
-    if argv.font_size and not argv.font:
-        parser.error('--font-size requires --font to be specified')
+    # XOR check: both font and font_size must be set or neither.
+    if bool(argv.font) ^ bool(argv.font_size):
+        parser.error('--font-size requires --font and vice versa.')
 
     return argv
 
