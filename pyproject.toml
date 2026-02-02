@@ -56,8 +56,13 @@ clean = [
 qa = [
   "hatch run type_check",
   "hatch test",
-  "hatch fmt",
+  "hatch fmt"
+]
+qax = [
+  "hatch run qa",
   "skylos .",
+  "bandit --recursive wim",
+  "bandit --skip B101 tests/",
   "complexipy ."
 ]
 release = [
