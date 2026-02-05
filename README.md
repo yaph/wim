@@ -90,43 +90,47 @@ wim --help
 
 <!-- START: DO NOT EDIT -->
 ```text
-usage: wim [-h] [--font FONT] [--font-size FONT_SIZE] [--format {bmp,jpeg,jpg,png,webp}] [--quality QUALITY]
-                             [--quantize] [-s WIDTH HEIGHT] [--strip] [-t TEXT] [-w WATERMARK]
+usage: wim [-h] [-i | -o OUTDIR] [--strip] [--trim] [--version] [--format {gif,png,jpeg,ico,webp,jpg,bmp}]
+                             [--output-label OUTPUT_LABEL] [--quality QUALITY] [--quantize QUANTIZE] [-s WIDTH HEIGHT]
+                             [--font FONT] [--font-size FONT_SIZE] [-t TEXT] [-w WATERMARK]
+                             [--watermark-opacity WATERMARK_OPACITY] [--watermark-scale WIDTH HEIGHT]
                              [--watermark-position {top-left,top-right,bottom-left,bottom-right,center}]
-                             [--watermark-opacity WATERMARK_OPACITY] [--watermark-scale WIDTH HEIGHT] [--version]
-                             [-i | -o OUTDIR]
                              filename [filename ...]
 
-Add text and manipulate images.
+Edit, optimize, and watermark images from the command line.
 
 positional arguments:
   filename              Input image filename. Use wildcard to process multiple files.
 
 options:
   -h, --help            show this help message and exit
-  --font FONT           Path to TrueType font file. If not specified, uses system default font.
-  --font-size FONT_SIZE
-                        Set the font size, default is 16.
-  --format {bmp,jpeg,jpg,png,webp}
-                        Output format (overrides input format)
+  -i, --inplace         Edit the image in place (overwrites original).
+  -o OUTDIR, --outdir OUTDIR
+                        Output directory for processed images.
+  --strip               Strip image of all metadata.
+  --trim                Trim uniform-color borders from image edges.
+  --version             show program's version number and exit
+  --format {gif,png,jpeg,ico,webp,jpg,bmp}
+                        Set the output format. If not set, original format is used.
+  --output-label OUTPUT_LABEL
+                        Label to append to the output file name. Ignored if --inplace is used.
   --quality QUALITY     Output quality 1-100 (lower = smaller file). Works with JPEG and WebP.
-  --quantize            Quantize the image to reduce its filesize, default is False.
+  --quantize QUANTIZE   Quantize the image with the desired number of colors, <= 256.
   -s WIDTH HEIGHT, --scale WIDTH HEIGHT
                         Set the maximum width and height as integer values.
-  --strip               Strip image of all metadata.
-  -t TEXT, --text TEXT  Set the text to append at the bottom of the image.
+  --font FONT           Font name (e.g., DejaVuSans, Arial) or path to TrueType font file (.ttf), requires font size setting.
+                        Falls back to system default if not specified or found.
+  --font-size FONT_SIZE
+                        Set the font size, requires font setting.
+  -t TEXT, --text TEXT  Set the text to add to the image.
   -w WATERMARK, --watermark WATERMARK
                         Path to watermark/overlay image to add to the image.
-  --watermark-position {top-left,top-right,bottom-left,bottom-right,center}
-                        Position of watermark (default: bottom-right).
   --watermark-opacity WATERMARK_OPACITY
                         Opacity of watermark 0-255 (default: 255).
   --watermark-scale WIDTH HEIGHT
                         Scale watermark to WIDTH HEIGHT in pixels.
-  --version             show program's version number and exit
-  -i, --inplace         Edit the image in place (overwrites original).
-  -o OUTDIR, --outdir OUTDIR
-                        Output directory for processed images.
+  --watermark-position {top-left,top-right,bottom-left,bottom-right,center}
+                        Position of watermark (default: bottom-right).
 
 ```
 <!-- END: DO NOT EDIT -->
