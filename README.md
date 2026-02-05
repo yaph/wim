@@ -90,7 +90,7 @@ wim --help
 
 <!-- START: DO NOT EDIT -->
 ```text
-usage: wim [-h] [-i | -o OUTDIR] [--strip] [--trim] [--version] [--format {gif,png,jpeg,ico,webp,jpg,bmp}]
+usage: wim [-h] [-i | -o OUTDIR] [--strip] [--trim] [--version] [--format {ico,jpg,png,webp,jpeg,bmp,gif}]
                              [--output-label OUTPUT_LABEL] [--quality QUALITY] [--quantize QUANTIZE] [-s WIDTH HEIGHT]
                              [--font FONT] [--font-size FONT_SIZE] [-t TEXT] [-w WATERMARK]
                              [--watermark-opacity WATERMARK_OPACITY] [--watermark-scale WIDTH HEIGHT]
@@ -110,7 +110,7 @@ options:
   --strip               Strip image of all metadata.
   --trim                Trim uniform-color borders from image edges.
   --version             show program's version number and exit
-  --format {gif,png,jpeg,ico,webp,jpg,bmp}
+  --format {ico,jpg,png,webp,jpeg,bmp,gif}
                         Set the output format. If not set, original format is used.
   --output-label OUTPUT_LABEL
                         Label to append to the output file name. Ignored if --inplace is used.
