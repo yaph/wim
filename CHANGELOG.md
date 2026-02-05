@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [2.0.0](https://github.com/yaph/wim/releases/tag/2.0.0) - 2026-02-02
+
+<small>[Compare with 1.2.0](https://github.com/yaph/wim/compare/1.2.0...2.0.0)</small>
+
+### Added
+
+- Add qax script to run qa checks with not required packages ([3266260](https://github.com/yaph/wim/commit/32662603c592e622942f2c94add2cdfe21dbf457) by Ramiro Gómez).
+- Add wim/extract_exifdata.py script. ([76579e2](https://github.com/yaph/wim/commit/76579e209a9ed546d389cd601ee37ead6d949433) by Ramiro Gómez).
+- Add type annotations ([736114e](https://github.com/yaph/wim/commit/736114e4031808317ce11568f6b572f279e88479) by Ramiro Gómez).
+- Add and edit function documentation. ([a329f43](https://github.com/yaph/wim/commit/a329f435d50c79ecc4edb45cdfcfc6ddee6af6b3) by Ramiro Gómez).
+- Add --trim argument ([10bb52d](https://github.com/yaph/wim/commit/10bb52df201d5de04bdbf299e7f7d04d1bd511fb) by Ramiro Gómez).
+- Add --quality argument for setting the image quality ([1fb9b6d](https://github.com/yaph/wim/commit/1fb9b6d11ab29d1bade84dc2792157f62d932912) by Ramiro Gómez).
+- Add --strip argument for removing metadata ([17389ea](https://github.com/yaph/wim/commit/17389ea96c3368225ad968b331e76d37859c5697) by Ramiro Gómez).
+- Add version argument ([422c6bb](https://github.com/yaph/wim/commit/422c6bb2d876c6664918744387cdd24c290e48ea) by Ramiro Gómez).
+- Add complexipy and skylos to qa script ([3545afd](https://github.com/yaph/wim/commit/3545afdecc4f6d3c2b00689ea1928a1ff0591b38) by Ramiro Gómez).
+
+### Fixed
+
+- Fix argument name in test ([922328e](https://github.com/yaph/wim/commit/922328ef4e3b36afb8fc4e304f2b122e1f8d44d4) by Ramiro Gómez).
+- fix: Retain metadata such as GPS location of original image ref: Reduce complexity of cli:main function fix: Center text on text image overlay fix: Apply font size when default font is used ([ffb8ad5](https://github.com/yaph/wim/commit/ffb8ad5311cec66a6d8ab6ca77bae4dea02b51d1) by Ramiro Gómez).
+
+### Changed
+
+- Change skylos call ([ddd7e4e](https://github.com/yaph/wim/commit/ddd7e4e8da6bebca4b53dab35dadd09719967cc4) by Ramiro Gómez).
+
+### Removed
+
+- Remove default --font-size and require --font when setting size. ([5c0358c](https://github.com/yaph/wim/commit/5c0358c7f43a24fd1efd0c8dfea56c822bdef8d2) by Ramiro Gómez).
+- Remove -q option ([9be4eab](https://github.com/yaph/wim/commit/9be4eabddb10040b5a7a72c78f66b307a369f4c8) by Ramiro Gómez).
+
 ## [1.2.0](https://github.com/yaph/wim/releases/tag/1.2.0) - 2025-12-29
 
 <small>[Compare with 1.1.0](https://github.com/yaph/wim/compare/1.1.0...1.2.0)</small>
